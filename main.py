@@ -14,7 +14,7 @@ lr = 4e-4
 
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-model = CrossFormer(hsi_bands, msi_bands).to(device)
+model = LTFF(hsi_bands, msi_bands).to(device)
 optimizer = optim.Adam(model.parameters(), lr=lr)
 scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer,step=100,decay_rate=0.1)
 max_epochs = 500
@@ -28,7 +28,7 @@ for e in range(max_epochs):
         gt,lrhsi,msi = batch_data
         gt,lrhsi,msi = gt.to(device),lrhsi.to(device),msi.to(device)
         optimizer.zero_grad()
-        pre_,= model(lrhsi,msi)
+        pre_= model(lrhsi,msi)
         loss_val = F.l1_loss(pre_,gt)
         loss_val.backward()
         optimizer.step()
